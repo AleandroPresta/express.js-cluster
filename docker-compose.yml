@@ -1,0 +1,17 @@
+services:
+    backend:
+        container_name: backend
+        build:
+            context: ./
+            dockerfile: Dockerfile.dev
+        networks:
+            cluster-network:
+                ipv4_address: 172.31.3.2
+        environment:
+            - ${EXPRESS_PORT:-3000}
+        ports:
+            - "${EXPRESS_PORT}:3000"
+
+networks:
+    cluster-network:
+        external: true
