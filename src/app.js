@@ -5,12 +5,23 @@ const port = process.env.EXPRESS_PORT || 3000
 const { pool } = require('./postgres.config')
 
 app.get('/', async (req, res) => {
-    await pool.connect()
+    try {
+        await pool.connect()
 
-    const result = await pool.query('SELECT * FROM documents')
-    console.log(result)
+        const result = await pool.query('SELECT * FROM documents')
 
-    // await pool.end()
+        res.json({
+            status: 'success',
+            code: 200,
+            timestamp: new Date().toISOString(),
+            source: 'db',
+            data: result.rows[0]
+        })
+    } catch (error) {
+        console.error('Error:', error)
+    } finally {
+        await pool.end()
+    }
 })
 
 app.listen(port, () => {
